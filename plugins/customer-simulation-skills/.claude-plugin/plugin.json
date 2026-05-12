@@ -1,7 +1,7 @@
 {
   "name": "customer-simulation-skills",
   "description": "Skills for running customer simulations and acting on the results.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author": {
     "name": "The Simulation Company"
   }
