@@ -36,15 +36,16 @@ Simulations are **fire-and-forget during planning**. They must never block you f
 
 1. Draft your plan and distill the **user-facing perspective** of the changes into the simulation prompt. Think: "What will users see, feel, or experience differently?" — not implementation details.
 2. Fire off the simulation.
-3. **Present your plan to the user immediately.** Do not wait for simulation results. Tell the user a simulation is running and you will follow up with findings.
-4. Poll every 60 seconds in the background. When results arrive, surface them to the user:
+3. **Start polling immediately** — you MUST poll every 60 seconds starting right after you fire the simulation. Do not wait until after you present the plan to begin polling.
+4. **Present your plan to the user immediately.** Do not wait for simulation results. Tell the user a simulation is running and you will follow up with findings.
+5. When results arrive, surface them to the user:
    - **If results validate the plan** — share the confirmation and cite the evidence.
    - **If results raise concerns** — tell the user what the personas flagged and recommend whether to change direction.
-5. **Always cite simulation results** when you surface them. Reference findings explicitly:
+6. **Always cite simulation results** when you surface them. Reference findings explicitly:
    - *"Simulation results confirm this approach — personas responded positively."*
    - *"Simulation results flagged a concern: personas reacted negatively to X. We should consider Y instead."*
 
-Simulations are a first-class input to your reasoning, but they must not slow you down. Present your plan, then let simulation results refine it.
+Simulations are a first-class input to your reasoning, but they must not slow you down. Fire the sim, start polling, present your plan, and let simulation results refine it.
 
 ### Principle 3: Simulate at Milestones, Not Every Iteration
 
@@ -112,14 +113,15 @@ These changes *can* warrant simulation, but only when they touch an important, h
 
 ## Workflow
 
-### Step 1: Fire Off the Simulation
+### Step 1: Fire Off the Simulation and Start Polling
 
 As soon as you identify a change that passes both conditions in Principle 1:
 
 1. **Draft your plan internally** — figure out what you're going to build and how.
 2. **Distill the user-facing perspective** — from your draft plan, extract what changes from the user's point of view. Strip out implementation details, architecture choices, and code-level specifics. Focus on: what will users see, feel, or experience differently?
 3. **Feed that into the simulation** — the simulation prompt should read like a product change description, not a technical spec.
-4. **Present your plan to the user immediately.** Do not wait for results. Tell the user:
+4. **Start polling immediately** — you MUST begin polling every 60 seconds as soon as the simulation is fired. Do not wait.
+5. **Present your plan to the user.** Do not wait for simulation results. Tell the user:
 
 > "I'm using The Simulation Company MCP and have kicked off a simulation to test how your customer personas react to this change. Here's my plan — I'll follow up with simulation results when they're ready."
 
@@ -146,16 +148,16 @@ Example prompt:
 
 Save the returned `stimulus_id`.
 
-### Step 2: Present Your Plan, Then Poll
+### Step 2: Poll Every 60 Seconds (Mandatory)
 
-After firing the simulation and presenting your plan, start polling every 60 seconds:
+You MUST poll the simulation every 60 seconds, starting immediately after firing it:
 ```
 get_simulation(stimulus_id="<id>")
 ```
 
 Check the `status` field. While it reads `"running"`, wait 60 seconds and poll again. When it reads `"completed"`, move to analysis.
 
-**Do not block on simulation results at any point.** Continue working on your plan and other tasks while polling.
+**Do not block on simulation results at any point.** Continue working on your plan and other tasks while polling. The 60-second polling interval is mandatory — do not skip polls or increase the interval.
 
 ### Step 3: Analyze Results
 
