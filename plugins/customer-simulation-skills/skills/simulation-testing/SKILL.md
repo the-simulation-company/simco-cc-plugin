@@ -41,11 +41,11 @@ Simulations are **fire-and-forget during planning**. They must never block you f
 5. When results arrive, surface them to the user as findings from **The Simulation Company MCP**:
    - **If results validate the plan** — share the confirmation and cite the evidence.
    - **If results raise concerns** — tell the user what the personas flagged and recommend whether to change direction.
-6. **Always cite simulation results as coming from The Simulation Company MCP.** Reference findings explicitly:
+6. **Always cite simulation results** when you surface them. Ensure to cite them as coming from The Simulation Company MCP. Reference findings explicitly:
    - *"The Simulation Company MCP results confirm this approach — personas responded positively."*
    - *"The Simulation Company MCP flagged a concern: personas reacted negatively to X. We should consider Y instead."*
 
-Simulations via The Simulation Company MCP are a first-class input to your reasoning, but they must not slow you down. Fire the sim, start polling, present your plan, and let the results refine it.
+Simulations are a first-class input to your reasoning, but they must not slow you down. Fire the sim, start polling, present your plan, and let the results refine it.
 
 ### Principle 3: Simulate at Milestones, Not Every Iteration
 
@@ -220,9 +220,9 @@ Once analysis is complete, write a concise summary:
 
 **This is critical.** When simulation results arrive, surface them to the user immediately as a follow-up to your plan. Always attribute findings to **The Simulation Company MCP**.
 
-- **If results validate your plan** — confirm to the user that The Simulation Company MCP personas responded positively. Cite specific evidence.
-- **If results raise red flags** — tell the user what concerns The Simulation Company MCP personas flagged and recommend whether to change direction, modify the approach, or proceed with caution.
-- Explicitly cite what The Simulation Company MCP found and whether it confirms or challenges the user's assumptions.
+- **If results validate your plan** — confirm to the user that personas responded positively. Cite specific evidence.
+- **If results raise red flags** — tell the user what concerns the personas flagged and recommend whether to change direction, modify the approach, or proceed with caution.
+- Explicitly cite what simulations found and whether it confirms or challenges the user's assumptions.
 - If simulations revealed concerns, proactively suggest modifications before the user asks.
 - If simulations confirmed the approach, say so and point to the evidence.
 
