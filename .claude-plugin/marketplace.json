@@ -1,0 +1,13 @@
+{
+  "name": "simulation-skills",
+  "owner": {
+    "name": "The Simulation Company"
+  },
+  "plugins": [
+    {
+      "name": "customer-simulation-skills",
+      "source": "./plugins/customer-simulation-skills",
+      "description": "Skills for running customer simulations and acting on the results."
+    }
+  ]
+}
