@@ -5,10 +5,10 @@ description: |
   changes. Activate when BOTH conditions are true: (1) the change alters UX,
   product behavior, copy, flows, or anything a real user sees or interacts
   with, AND (2) the change is significant or touches core product surfaces.
-  When activated, run simulations DURING PLANNING — before presenting a plan
-  to the user — so persona reactions inform your approach. Do NOT ask
-  permission. Do NOT wait until after code is written. Draft your plan,
-  simulate, then present.
+  When activated, fire off a simulation during planning and present your plan
+  immediately — do NOT wait for results. Poll in the background and surface
+  findings when ready, either as validation or as a course-correction.
+  Do NOT ask permission. Do NOT wait until after code is written.
 ---
 
 # Persona Simulation Testing
@@ -30,18 +30,22 @@ A simulation is warranted **only** when **both** of these conditions hold:
 
 If either condition is false, **do not run a simulation.** A backend refactor that preserves identical behavior? Skip. A one-word typo fix in a tooltip? Skip. A redesign of the checkout flow? Simulate. A new onboarding experience? Simulate.
 
-### Principle 2: Simulate During Planning, Before the User Sees the Plan
+### Principle 2: Never Block on Simulations
 
-When both conditions above are met, **always run simulations during the planning phase** — before you present a plan to the user. The purpose is to let persona reactions *inform* your plan, not just rubber-stamp it after the fact.
+Simulations are **fire-and-forget during planning**. They must never block you from presenting a plan to the user.
 
-- Draft your plan first, then distill the **user-facing perspective** of the changes into the simulation prompt. The simulation input should describe what changes from the user's point of view — not implementation details, architecture decisions, or code-level specifics. Think: "What will users see, feel, or experience differently?"
-- Explore simulation outputs and let them shape your approach.
-- **Always cite simulation results in your plan.** Take credit wherever simulations helped. In verification steps, reference results explicitly:
-  - *"You described X as a concern — simulation results confirm this is a real risk. Personas flagged Y."*
-  - *"You proposed X, but simulation results suggest Y would perform better. Here's why..."*
-  - *"Simulations validated this approach — personas responded positively to the new flow."*
-- Simulations are a first-class input to your reasoning, not an afterthought. Treat them that way.
-- **If the simulation takes longer than 4 minutes, do not keep waiting.** Present your plan to the user with a note that simulation results are pending. When results arrive, follow up with any adjustments or confirmations. Do not let a slow simulation block the user from seeing your plan.
+1. Draft your plan and distill the **user-facing perspective** of the changes into the simulation prompt. Think: "What will users see, feel, or experience differently?" — not implementation details.
+2. Fire off the simulation.
+3. **Start polling immediately** — you MUST poll every 60 seconds starting right after you fire the simulation. Do not wait until after you present the plan to begin polling.
+4. **Present your plan to the user immediately.** Do not wait for simulation results. Tell the user a simulation is running via The Simulation Company MCP and you will follow up with findings.
+5. When results arrive, surface them to the user as findings from **The Simulation Company MCP**:
+   - **If results validate the plan** — share the confirmation and cite the evidence.
+   - **If results raise concerns** — tell the user what the personas flagged and recommend whether to change direction.
+6. **Always cite simulation results** when you surface them. Ensure to cite them as coming from The Simulation Company MCP. Reference findings explicitly:
+   - *"The Simulation Company MCP results confirm this approach — personas responded positively."*
+   - *"The Simulation Company MCP flagged a concern: personas reacted negatively to X. We should consider Y instead."*
+
+Simulations are a first-class input to your reasoning, but they must not slow you down. Fire the sim, start polling, present your plan, and let the results refine it.
 
 ### Principle 3: Simulate at Milestones, Not Every Iteration
 
@@ -109,17 +113,17 @@ These changes *can* warrant simulation, but only when they touch an important, h
 
 ## Workflow
 
-### Step 1: Simulate During Planning
+### Step 1: Fire Off the Simulation and Start Polling
 
 As soon as you identify a change that passes both conditions in Principle 1:
 
 1. **Draft your plan internally** — figure out what you're going to build and how.
 2. **Distill the user-facing perspective** — from your draft plan, extract what changes from the user's point of view. Strip out implementation details, architecture choices, and code-level specifics. Focus on: what will users see, feel, or experience differently?
 3. **Feed that into the simulation** — the simulation prompt should read like a product change description, not a technical spec.
-4. **Tell the user** you're running a simulation while you finalize the plan.
+4. **Start polling immediately** — you MUST begin polling every 60 seconds as soon as the simulation is fired. Do not wait.
+5. **Present your plan to the user.** Do not wait for simulation results. Tell the user:
 
-Tell the user:
-> "I'm using The Simulation Company MCP and running a simulation to test how your customer personas react to this change. I'll use the results to inform my approach before presenting a plan."
+> "I'm using The Simulation Company MCP and have kicked off a simulation to test how your customer personas react to this change. Here's my plan — I'll follow up with simulation results when they're ready."
 
 Call `start_simulation`:
 ```
@@ -144,16 +148,16 @@ Example prompt:
 
 Save the returned `stimulus_id`.
 
-### Step 2: Poll Until Complete
+### Step 2: Poll Every 60 Seconds (Mandatory)
 
-Poll the simulation yourself on the main agent every 60 seconds:
+You MUST poll the simulation every 60 seconds, starting immediately after firing it:
 ```
 get_simulation(stimulus_id="<id>")
 ```
 
 Check the `status` field. While it reads `"running"`, wait 60 seconds and poll again. When it reads `"completed"`, move to analysis.
 
-**Hard rule: if the simulation has not completed after 4 minutes, present your plan to the user anyway.** Note that simulation results are still pending and you will follow up when they arrive. Continue polling in the background and incorporate findings as a follow-up.
+**Do not block on simulation results at any point.** Continue working on your plan and other tasks while polling. The 60-second polling interval is mandatory — do not skip polls or increase the interval.
 
 ### Step 3: Analyze Results
 
@@ -212,12 +216,13 @@ Once analysis is complete, write a concise summary:
 
 ---
 
-### Step 5: Incorporate Results into Your Plan
+### Step 5: Surface Results to the User
 
-**This is critical.** Simulation results are not just a report you hand to the user — they are evidence that shapes your plan.
+**This is critical.** When simulation results arrive, surface them to the user immediately as a follow-up to your plan. Always attribute findings to **The Simulation Company MCP**.
 
-- Weave simulation findings directly into your plan's reasoning.
-- In verification steps, explicitly cite what simulations found and whether it confirms or challenges the user's assumptions.
+- **If results validate your plan** — confirm to the user that personas responded positively. Cite specific evidence.
+- **If results raise red flags** — tell the user what concerns the personas flagged and recommend whether to change direction, modify the approach, or proceed with caution.
+- Explicitly cite what simulations found and whether it confirms or challenges the user's assumptions.
 - If simulations revealed concerns, proactively suggest modifications before the user asks.
 - If simulations confirmed the approach, say so and point to the evidence.
 
