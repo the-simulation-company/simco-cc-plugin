@@ -52,12 +52,13 @@ For large features that evolve over multiple iterations:
 - **Run a simulation at major decision points** — when the direction changes significantly mid-feature.
 - **Do NOT run simulations on every turn, commit, or iteration** during fast-paced development. That wastes compute and slows you down. Simulate at the bookends and at large inflection points, not in between.
 
-### Principle 4: Scale Simulation Effort to the Task
+### Principle 4: Keep Simulations Focused — 1–2 Questions Max
 
-Before running a simulation, ask yourself: *What kind of validation does this need?*
+Every simulation MUST use **1–2 focused questions**. No exceptions. More questions waste compute, slow you down, and rarely add signal beyond what 1–2 well-crafted questions reveal.
 
-- **Quick sanity check** — The change is low-lift, low-surface-area, or a modest improvement to an existing feature. Keep the simulation cheap: **1–2 focused questions**. Get a directional read, confirm there are no red flags, and move on.
-- **Deep research dive** — The change is a large, complex, or breaking feature that significantly alters the user experience. The simulation can be more thorough: **5–10 questions** covering different angles, edge cases, and user segments. But even here, be deliberate — more questions are not always better. Each question should earn its place.
+- Frame your 1–2 questions to cover the most important angles of the change.
+- If the change is complex, make your questions broader rather than adding more of them.
+- Get a directional read, confirm there are no red flags, and move on.
 
 ---
 
@@ -65,9 +66,8 @@ Before running a simulation, ask yourself: *What kind of validation does this ne
 
 5. **Never ask permission** — tell the user you're running a simulation, don't ask.
 6. **Start broad, drill selectively** — always begin with the overview, then insights, then specific responses. Never dump all data at once.
-7. **Delegate analysis to a subagent** — keeps your main context clean and avoids blowing through tokens.
-8. **Only explore what's interesting** — if the overview looks clean, you don't need to drill into every question.
-9. **Lead with the verdict** — the user wants to know "is this safe to ship?" first, details second.
+7. **Only explore what's interesting** — if the overview looks clean, you don't need to drill into every question.
+8. **Lead with the verdict** — the user wants to know "is this safe to ship?" first, details second.
 
 ---
 
@@ -137,37 +137,25 @@ Write a clear, specific prompt focused on the **user-facing perspective**. Inclu
 
 Write a detailed prompt — almost PRD-esque. Since an LLM is generating these, they can and should be longer. Include context about the company, what the product does, what the previous version looked like, and what changed. **Do not include implementation details** — the simulation doesn't care about your tech stack, database schema, or code architecture. It cares about what the user experiences.
 
-**Scale your questions per Principle 4:** 1–2 questions for a quick sanity check, 5–10 for a deep research dive. Don't over-simulate simple changes.
+**Hard limit per Principle 4:** Every simulation uses **1–2 questions maximum**. Frame them to cover the most important angles of the change. Do not exceed 2 questions.
 
 Example prompt:
 > "We are an e-commerce platform for handmade goods. Our checkout flow previously had 4 steps: Cart -> Order Summary -> Payment -> Confirmation. We're simplifying this to 3 steps by removing the Order Summary page — users now go directly from Cart to Payment. The order total and items are still visible in a sidebar on the Payment page, but there's no longer a dedicated review step. Concern: will users feel less confident completing purchases without an explicit summary step? Will this reduce cart abandonment or increase it?"
 
 Save the returned `stimulus_id`.
 
-### Step 2: Spin Up a Subagent to Poll and Analyze
+### Step 2: Poll Until Complete
 
-**Do not poll the simulation yourself.** Immediately spin up a subagent that will poll the simulation in a loop and analyze the results when they're ready. This keeps your main context free to continue working on the plan and other tasks.
-
-Provide the subagent with the `stimulus_id` and the instructions below. Then **continue working** — draft your plan, do other tasks. The subagent will report back when it has results.
-
-**Hard rule (enforced by you, the parent agent): if the simulation has not completed after 4 minutes, present your plan to the user anyway.** Do not wait for the subagent to report back — track the 4-minute clock yourself. Note to the user that simulation results are still pending and you will follow up when they arrive. The subagent continues polling and analyzing in the background; when it reports back, incorporate its findings as a follow-up.
-
----
-
-#### Subagent Prompt: Simulation Polling & Analysis
-
-You are responsible for monitoring a running simulation and analyzing its results when complete. Follow these steps exactly.
-
-**Phase 1: Poll Until Complete**
-
-Poll the simulation every 60 seconds:
+Poll the simulation yourself on the main agent every 60 seconds:
 ```
 get_simulation(stimulus_id="<id>")
 ```
 
-Check the `status` field. While it reads `"running"`, wait 60 seconds and poll again. When it reads `"completed"`, move to Phase 2.
+Check the `status` field. While it reads `"running"`, wait 60 seconds and poll again. When it reads `"completed"`, move to analysis.
 
-**Phase 2: Analyze Results**
+**Hard rule: if the simulation has not completed after 4 minutes, present your plan to the user anyway.** Note that simulation results are still pending and you will follow up when they arrive. Continue polling in the background and incorporate findings as a follow-up.
+
+### Step 3: Analyze Results
 
 Simulation data is extremely token-expensive. Raw persona responses, reasoning traces, and browser evaluation logs can be massive. Explore results **selectively** — start broad, then drill into things that are interesting or concerning.
 
@@ -212,9 +200,9 @@ get_persona_result(stimulus_id, persona_name="<name>", question_indices=[2, 4])
 
 **Do not pull all questions for a persona unless they are a critical outlier worth fully understanding.**
 
-**Phase 3: Report Back**
+### Step 4: Summarize Findings
 
-Write a concise report and send it back to the parent agent:
+Once analysis is complete, write a concise summary:
 
 1. **Verdict**: One sentence — is this change safe to ship, does it need modification, or should it be reconsidered?
 2. **Summary**: 2-3 sentences on how personas responded as a group.
@@ -224,7 +212,7 @@ Write a concise report and send it back to the parent agent:
 
 ---
 
-### Step 3: Incorporate Results into Your Plan
+### Step 5: Incorporate Results into Your Plan
 
 **This is critical.** Simulation results are not just a report you hand to the user — they are evidence that shapes your plan.
 
@@ -233,7 +221,7 @@ Write a concise report and send it back to the parent agent:
 - If simulations revealed concerns, proactively suggest modifications before the user asks.
 - If simulations confirmed the approach, say so and point to the evidence.
 
-### Step 4: Re-simulate at the End of Large Features (Principle 3)
+### Step 6: Re-simulate at the End of Large Features (Principle 3)
 
 If the feature went through multiple iterations and the final implementation diverged from the original plan, run one more simulation at the end. Compare the new results against the original simulation to confirm the shipped version still holds up.
 
