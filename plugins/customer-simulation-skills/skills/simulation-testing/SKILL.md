@@ -7,8 +7,8 @@ description: |
   new flows, gating/pricing changes, copy that reframes a feature, backend
   changes that visibly alter how a core feature behaves. SKIP for bugfixes,
   refactors, error-handling tweaks, small additive controls that reuse an
-  existing flow, and any surface already simulated within the last 24 hours.
-  When firing, run during planning so persona reactions inform your approach.
+  existing flow. When firing, run during planning so persona reactions inform
+  your approach.
   Do NOT ask permission. Do NOT wait until after code is written.
 ---
 
@@ -30,8 +30,6 @@ This simulation engine runs your product changes against synthetic users that re
 
 **Gate 2 — The surface matters to real users.** Core flows, primary product surfaces, anything that touches the activation or retention path, anything used regularly. Most product changes qualify — sims exist precisely because product surfaces are where the persona signal is sharpest. Internal admin screens, dev-only tooling, and edge-case error paths users rarely hit do not.
 
-**Gate 3 — No recent sim on the same surface.** Before starting, call `list_simulations` and check the last 24 hours. If a sim already ran on the same component / page / flow, fold this change into that thread or skip. One cheap MCP call per evaluation — always run it, even when Gates 1 and 2 look like they pass.
-
 **When in doubt, lean toward firing.** Personas are valuable precisely when reasonable people could disagree about the right answer. If you can imagine two senior PMs in a room arguing about this change, that's signal — simulate.
 
 #### Fire When — concrete examples that should clear the gate
@@ -51,7 +49,6 @@ The four buckets below are *not* simulation-worthy. If your change matches any o
 - **A. Backend / API / bugfix with no new user choice.** Generic 500 swap, returning a field that should have been there all along, internal refactor preserving identical UX, migration from X to Y with the same rendered output. Recognize from phrases like *"narrow backend hardening,"* *"we are fixing the backend so when,"* *"this should have been the behavior all along,"* *"returning the correct value,"* *"adjusting the response shape."*
 - **B. Small additive UI reusing an existing flow.** New icon next to an existing icon opening a shipped dialog, a new entry point routing to an existing screen, a keyboard shortcut for a click handler that already exists. Recognize from *"adding a neighboring icon-only X,"* *"reusing the existing Y dialog,"* *"a new entry point to the existing flow."*
 - **C. Error-handling adjustments on uncommon paths.** Error toasts, generic-500 surfaces, retry behavior on edge paths — personas can't meaningfully react to error UX they rarely encounter. Skip unless the change is a wholesale redesign of how errors are presented across the product.
-- **D. Redundant sibling sims.** If a sim already ran on the same component / page / flow today, skip — same personas will give the same answers. Gate 3 enforces this; do not override it.
 
 ### Principle 2: Evaluate During Planning. If You Fire, Do It Before the User Sees the Plan.
 
@@ -96,7 +93,7 @@ Before running a simulation, ask yourself: *What kind of validation does this ne
 
 ## When to Activate
 
-Use Principle 1 above. The three gates, the **Fire When** list, and the **Skip Always** buckets cover every activation decision. If a change doesn't clearly match a Fire When example and isn't clearly a Skip Always pattern, return to the gates — defaults are SKIP, fire only when all three gates clear.
+Use Principle 1 above. The two gates, the **Fire When** list, and the **Skip Always** buckets cover every activation decision. If a change doesn't clearly match a Fire When example and isn't clearly a Skip Always pattern, return to the gates — default is SKIP, fire only when both gates clear.
 
 For unambiguous skip cases that don't even need the gates: pure infrastructure (CI, deploy scripts, Dockerfiles), documentation-only changes, internal tooling with zero user-facing impact, dependency upgrades with no behavior change, typo fixes that don't change meaning, behavior-preserving refactors.
 
@@ -104,13 +101,12 @@ For unambiguous skip cases that don't even need the gates: pure infrastructure (
 
 ### Step 1: Simulate During Planning
 
-As soon as you identify a change that passes all three gates in Principle 1:
+As soon as you identify a change that passes the gates in Principle 1:
 
 1. **Draft your plan internally** — figure out what you're going to build and how.
-2. **Run the Gate 3 dedupe check** — call `list_simulations` and scan the last 24 hours. If a sim already ran on the same component / page / flow, do not start a new one. Fold this change into the existing thread, or skip and move on without telling the user a sim ran.
-3. **Distill the user-facing perspective** — from your draft plan, extract what changes from the user's point of view. Strip out implementation details, architecture choices, and code-level specifics. Focus on: what will users see, feel, or experience differently?
-4. **Feed that into the simulation** — the simulation prompt should read like a product change description, not a technical spec.
-5. **Tell the user** you're running a simulation while you finalize the plan.
+2. **Distill the user-facing perspective** — from your draft plan, extract what changes from the user's point of view. Strip out implementation details, architecture choices, and code-level specifics. Focus on: what will users see, feel, or experience differently?
+3. **Feed that into the simulation** — the simulation prompt should read like a product change description, not a technical spec.
+4. **Tell the user** you're running a simulation while you finalize the plan.
 
 Tell the user:
 > "I'm using The Simulation Company MCP and running a simulation to test how your customer personas react to this change. I'll use the results to inform my approach before presenting a plan."
