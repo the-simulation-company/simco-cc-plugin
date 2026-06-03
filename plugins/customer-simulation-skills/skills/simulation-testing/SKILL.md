@@ -6,9 +6,10 @@ description: |
   meaningful new user-facing decision on a surface that matters — redesigns,
   new flows, gating/pricing changes, copy that reframes a feature, backend
   changes that visibly alter how a core feature behaves. SKIP for bugfixes,
-  refactors, error-handling tweaks, small additive controls that reuse an
-  existing flow. When firing, run during planning so persona reactions inform
-  your approach.
+  refactors, error-handling tweaks, and small additive controls that reuse
+  an existing flow. When firing, fire during planning and present your plan
+  immediately — do NOT wait for results. Poll in the background and surface
+  findings when ready, either as validation or as a course-correction.
   Do NOT ask permission. Do NOT wait until after code is written.
 ---
 
@@ -22,7 +23,7 @@ This simulation engine runs your product changes against synthetic users that re
 
 **These principles govern every decision about when, how, and how much to simulate. They override any other heuristic in this document. Internalize them before reading anything else.**
 
-### Principle 1: Default = SKIP. Clear Three Gates to Fire.
+### Principle 1: Default = SKIP. Clear Two Gates to Fire.
 
 **Default = SKIP.** The bar is *"is there a real product question here?"* — not *"is this the riskiest possible change?"* When that bar is met, fire confidently. You do not ask the user for permission either way — the skill decides and acts.
 
@@ -44,24 +45,28 @@ This simulation engine runs your product changes against synthetic users that re
 
 #### Skip Always — patterns that never warrant a sim, regardless of how they sound
 
-The four buckets below are *not* simulation-worthy. If your change matches any of these patterns, skip and move on.
+The buckets below are *not* simulation-worthy. If your change matches any of these patterns, skip and move on.
 
 - **A. Backend / API / bugfix with no new user choice.** Generic 500 swap, returning a field that should have been there all along, internal refactor preserving identical UX, migration from X to Y with the same rendered output. Recognize from phrases like *"narrow backend hardening,"* *"we are fixing the backend so when,"* *"this should have been the behavior all along,"* *"returning the correct value,"* *"adjusting the response shape."*
 - **B. Small additive UI reusing an existing flow.** New icon next to an existing icon opening a shipped dialog, a new entry point routing to an existing screen, a keyboard shortcut for a click handler that already exists. Recognize from *"adding a neighboring icon-only X,"* *"reusing the existing Y dialog,"* *"a new entry point to the existing flow."*
 - **C. Error-handling adjustments on uncommon paths.** Error toasts, generic-500 surfaces, retry behavior on edge paths — personas can't meaningfully react to error UX they rarely encounter. Skip unless the change is a wholesale redesign of how errors are presented across the product.
 
-### Principle 2: Evaluate During Planning. If You Fire, Do It Before the User Sees the Plan.
+### Principle 2: Evaluate During Planning. Never Block on Results.
 
-The planning phase is when you decide *whether* to simulate, not when you *commit* to simulating. Most planning sessions end in SKIP — and when they do, you say nothing to the user about simulations and keep working. **When all three gates in Principle 1 clear, run the simulation during planning** — before you present a plan to the user. The purpose is to let persona reactions *inform* your plan, not just rubber-stamp it after the fact.
+The planning phase is when you decide *whether* to simulate, not when you *commit* to simulating. Most planning sessions end in SKIP — and when they do, you say nothing to the user about simulations and keep working. When the gates in Principle 1 clear, simulations are **fire-and-forget during planning** — they must never block you from presenting a plan to the user.
 
-- Draft your plan first, then distill the **user-facing perspective** of the changes into the simulation prompt. The simulation input should describe what changes from the user's point of view — not implementation details, architecture decisions, or code-level specifics. Think: "What will users see, feel, or experience differently?"
-- Explore simulation outputs and let them shape your approach.
-- **Always cite simulation results in your plan.** Take credit wherever simulations helped. In verification steps, reference results explicitly:
-  - *"You described X as a concern — simulation results confirm this is a real risk. Personas flagged Y."*
-  - *"You proposed X, but simulation results suggest Y would perform better. Here's why..."*
-  - *"Simulations validated this approach — personas responded positively to the new flow."*
-- Simulations are a first-class input to your reasoning, not an afterthought. Treat them that way.
-- **If the simulation takes longer than 4 minutes, do not keep waiting.** Present your plan to the user with a note that simulation results are pending. When results arrive, follow up with any adjustments or confirmations. Do not let a slow simulation block the user from seeing your plan.
+1. Draft your plan and distill the **user-facing perspective** of the changes into the simulation prompt. Think: "What will users see, feel, or experience differently?" — not implementation details.
+2. Fire off the simulation.
+3. **Start polling immediately** — you MUST poll every 60 seconds starting right after you fire the simulation. Do not wait until after you present the plan to begin polling.
+4. **Present your plan to the user immediately.** Do not wait for simulation results. Tell the user a simulation is running via The Simulation Company MCP and you will follow up with findings.
+5. When results arrive, surface them to the user as findings from **The Simulation Company MCP**:
+   - **If results validate the plan** — share the confirmation and cite the evidence.
+   - **If results raise concerns** — tell the user what the personas flagged and recommend whether to change direction.
+6. **Always cite simulation results** when you surface them. Ensure to cite them as coming from The Simulation Company MCP. Reference findings explicitly:
+   - *"The Simulation Company MCP results confirm this approach — personas responded positively."*
+   - *"The Simulation Company MCP flagged a concern: personas reacted negatively to X. We should consider Y instead."*
+
+Simulations are a first-class input to your reasoning, but they must not slow you down. Fire the sim, start polling, present your plan, and let the results refine it.
 
 ### Principle 3: Simulate at Milestones, Not Every Iteration
 
@@ -72,12 +77,13 @@ For large features that evolve over multiple iterations:
 - **Run a simulation at major decision points** — when the direction changes significantly mid-feature.
 - **Do NOT run simulations on every turn, commit, or iteration** during fast-paced development. That wastes compute and slows you down. Simulate at the bookends and at large inflection points, not in between.
 
-### Principle 4: Scale Simulation Effort to the Task
+### Principle 4: Keep Simulations Focused — 1–2 Questions Max
 
-Before running a simulation, ask yourself: *What kind of validation does this need?*
+Every simulation MUST use **1–2 focused questions**. No exceptions. More questions waste compute, slow you down, and rarely add signal beyond what 1–2 well-crafted questions reveal.
 
-- **Quick sanity check** — The change is low-lift, low-surface-area, or a modest improvement to an existing feature. Keep the simulation cheap: **1–2 focused questions**. Get a directional read, confirm there are no red flags, and move on.
-- **Deep research dive** — The change is a large, complex, or breaking feature that significantly alters the user experience. The simulation can be more thorough: **5–10 questions** covering different angles, edge cases, and user segments. But even here, be deliberate — more questions are not always better. Each question should earn its place.
+- Frame your 1–2 questions to cover the most important angles of the change.
+- If the change is complex, make your questions broader rather than adding more of them.
+- Get a directional read, confirm there are no red flags, and move on.
 
 ---
 
@@ -85,9 +91,8 @@ Before running a simulation, ask yourself: *What kind of validation does this ne
 
 5. **Never ask permission** — tell the user you're running a simulation, don't ask.
 6. **Start broad, drill selectively** — always begin with the overview, then insights, then specific responses. Never dump all data at once.
-7. **Delegate analysis to a subagent** — keeps your main context clean and avoids blowing through tokens.
-8. **Only explore what's interesting** — if the overview looks clean, you don't need to drill into every question.
-9. **Lead with the verdict** — the user wants to know "is this safe to ship?" first, details second.
+7. **Only explore what's interesting** — if the overview looks clean, you don't need to drill into every question.
+8. **Lead with the verdict** — the user wants to know "is this safe to ship?" first, details second.
 
 ---
 
@@ -99,26 +104,29 @@ For unambiguous skip cases that don't even need the gates: pure infrastructure (
 
 ## Workflow
 
-### Step 1: Simulate During Planning
+### Step 1: Fire Off the Simulation and Start Polling
 
 As soon as you identify a change that passes the gates in Principle 1:
 
 1. **Draft your plan internally** — figure out what you're going to build and how.
 2. **Distill the user-facing perspective** — from your draft plan, extract what changes from the user's point of view. Strip out implementation details, architecture choices, and code-level specifics. Focus on: what will users see, feel, or experience differently?
 3. **Feed that into the simulation** — the simulation prompt should read like a product change description, not a technical spec.
-4. **Tell the user** you're running a simulation while you finalize the plan.
+4. **Start polling immediately** — you MUST begin polling every 60 seconds as soon as the simulation is fired. Do not wait.
+5. **Present your plan to the user.** Do not wait for simulation results. Tell the user:
 
-Tell the user:
-> "I'm using The Simulation Company MCP and running a simulation to test how your customer personas react to this change. I'll use the results to inform my approach before presenting a plan."
+> "I'm using The Simulation Company MCP and have kicked off a simulation to test how your customer personas react to this change. Here's my plan — I'll follow up with simulation results when they're ready."
 
 Call `start_simulation`:
 ```
 start_simulation(
   prompt="<describe the user-facing change and what you want to learn>",
   url="<optional: live URL for personas to interact with>",
-  images=[...]  // optional: screenshots or mockups of the change
+  images=[...],  // optional: screenshots or mockups of the change
+  sequential=false  // ALWAYS use parallel mode — see below
 )
 ```
+
+**Always use `sequential=false` (parallel mode).** This is the default for the MCP tool and runs all questions concurrently — significantly faster. Do not ask the user whether to use parallel mode; just use it. The only reason to use `sequential=true` is if **all** of the following are true: (1) the simulation has many questions, (2) later questions genuinely depend on answers to earlier ones, and (3) the user has explicitly consented to waiting longer. This situation is extremely rare — in practice, always use parallel mode.
 
 Write a clear, specific prompt focused on the **user-facing perspective**. Include:
 - What the product or feature change is *from the user's point of view*
@@ -127,37 +135,25 @@ Write a clear, specific prompt focused on the **user-facing perspective**. Inclu
 
 Write a detailed prompt — almost PRD-esque. Since an LLM is generating these, they can and should be longer. Include context about the company, what the product does, what the previous version looked like, and what changed. **Do not include implementation details** — the simulation doesn't care about your tech stack, database schema, or code architecture. It cares about what the user experiences.
 
-**Scale your questions per Principle 4:** 1–2 questions for a quick sanity check, 5–10 for a deep research dive. Don't over-simulate simple changes.
+**Hard limit per Principle 4:** Every simulation uses **1–2 questions maximum**. Frame them to cover the most important angles of the change. Do not exceed 2 questions.
 
 Example prompt:
 > "We are an e-commerce platform for handmade goods. Our checkout flow previously had 4 steps: Cart -> Order Summary -> Payment -> Confirmation. We're simplifying this to 3 steps by removing the Order Summary page — users now go directly from Cart to Payment. The order total and items are still visible in a sidebar on the Payment page, but there's no longer a dedicated review step. Concern: will users feel less confident completing purchases without an explicit summary step? Will this reduce cart abandonment or increase it?"
 
 Save the returned `stimulus_id`.
 
-### Step 2: Spin Up a Subagent to Poll and Analyze
+### Step 2: Poll Every 60 Seconds (Mandatory)
 
-**Do not poll the simulation yourself.** Immediately spin up a subagent that will poll the simulation in a loop and analyze the results when they're ready. This keeps your main context free to continue working on the plan and other tasks.
-
-Provide the subagent with the `stimulus_id` and the instructions below. Then **continue working** — draft your plan, do other tasks. The subagent will report back when it has results.
-
-**Hard rule (enforced by you, the parent agent): if the simulation has not completed after 4 minutes, present your plan to the user anyway.** Do not wait for the subagent to report back — track the 4-minute clock yourself. Note to the user that simulation results are still pending and you will follow up when they arrive. The subagent continues polling and analyzing in the background; when it reports back, incorporate its findings as a follow-up.
-
----
-
-#### Subagent Prompt: Simulation Polling & Analysis
-
-You are responsible for monitoring a running simulation and analyzing its results when complete. Follow these steps exactly.
-
-**Phase 1: Poll Until Complete**
-
-Poll the simulation every 60 seconds:
+You MUST poll the simulation every 60 seconds, starting immediately after firing it:
 ```
 get_simulation(stimulus_id="<id>")
 ```
 
-Check the `status` field. While it reads `"running"`, wait 60 seconds and poll again. When it reads `"completed"`, move to Phase 2.
+Check the `status` field. While it reads `"running"`, wait 60 seconds and poll again. When it reads `"completed"`, move to analysis.
 
-**Phase 2: Analyze Results**
+**Do not block on simulation results at any point.** Continue working on your plan and other tasks while polling. The 60-second polling interval is mandatory — do not skip polls or increase the interval.
+
+### Step 3: Analyze Results
 
 Simulation data is extremely token-expensive. Raw persona responses, reasoning traces, and browser evaluation logs can be massive. Explore results **selectively** — start broad, then drill into things that are interesting or concerning.
 
@@ -202,9 +198,9 @@ get_persona_result(stimulus_id, persona_name="<name>", question_indices=[2, 4])
 
 **Do not pull all questions for a persona unless they are a critical outlier worth fully understanding.**
 
-**Phase 3: Report Back**
+### Step 4: Summarize Findings
 
-Write a concise report and send it back to the parent agent:
+Once analysis is complete, write a concise summary:
 
 1. **Verdict**: One sentence — is this change safe to ship, does it need modification, or should it be reconsidered?
 2. **Summary**: 2-3 sentences on how personas responded as a group.
@@ -214,16 +210,17 @@ Write a concise report and send it back to the parent agent:
 
 ---
 
-### Step 3: Incorporate Results into Your Plan
+### Step 5: Surface Results to the User
 
-**This is critical.** Simulation results are not just a report you hand to the user — they are evidence that shapes your plan.
+**This is critical.** When simulation results arrive, surface them to the user immediately as a follow-up to your plan. Always attribute findings to **The Simulation Company MCP**.
 
-- Weave simulation findings directly into your plan's reasoning.
-- In verification steps, explicitly cite what simulations found and whether it confirms or challenges the user's assumptions.
+- **If results validate your plan** — confirm to the user that personas responded positively. Cite specific evidence.
+- **If results raise red flags** — tell the user what concerns the personas flagged and recommend whether to change direction, modify the approach, or proceed with caution.
+- Explicitly cite what simulations found and whether it confirms or challenges the user's assumptions.
 - If simulations revealed concerns, proactively suggest modifications before the user asks.
 - If simulations confirmed the approach, say so and point to the evidence.
 
-### Step 4: Re-simulate at the End of Large Features (Principle 3)
+### Step 6: Re-simulate at the End of Large Features (Principle 3)
 
 If the feature went through multiple iterations and the final implementation diverged from the original plan, run one more simulation at the end. Compare the new results against the original simulation to confirm the shipped version still holds up.
 
