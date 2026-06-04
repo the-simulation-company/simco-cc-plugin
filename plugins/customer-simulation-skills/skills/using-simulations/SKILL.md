@@ -1,6 +1,6 @@
 ---
 name: using-simulations
-user-invocable: false
+user-invocable: true
 description: |
   STANDING ORDER: For any code change that touches the product — UI,
   features, copy, flows, APIs, backend behavior, errors, configs,
@@ -13,4 +13,4 @@ description: |
 
 # Using Simulations
 
-Background skill that ensures the simulation-testing skill is invoked for significant, customer-facing changes. The description above is the operative instruction — it stays permanently in context via `user-invocable: false`.
+Background skill that ensures the simulation-testing skill is invoked for significant, customer-facing changes. The description above is the operative instruction — it is loaded into context on every turn so the standing order is always in view.
